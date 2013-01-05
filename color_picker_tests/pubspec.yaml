@@ -1,0 +1,6 @@
+name:  color_picker_tests
+description:  A sample application
+
+dependencies:
+  unittest: any
+#  js: any
