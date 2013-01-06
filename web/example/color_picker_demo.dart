@@ -1,5 +1,5 @@
 import 'dart:html';
-import '../../color_picker/color_picker_lib.dart';
+import '../../color_picker_lib.dart';
 
 void main() {
   window.on.load.add((e) => _create());

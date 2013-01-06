@@ -1,6 +1,0 @@
-name:  color_picker
-description:  The Color Picker control creates a Adobe Photoshop style HSV color picker where the RGB values can be picked based on the Hue, Saturation and Value parameters.
-
-#dependencies:
-#  js: any
-#  unittest: any
