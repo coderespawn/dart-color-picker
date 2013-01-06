@@ -2,7 +2,7 @@
 
 The Color Picker control creates a Adobe Photoshop style [HSV](http://en.wikipedia.org/wiki/HSL_and_HSV) color picker where the RGB values can be picked based on the Hue, Saturation and Value parameters.
 
-![Color Picker](docs/images/color_picker_large.png)
+![Color Picker](https://raw.github.com/coderespawn/dart-color-picker/master/docs/images/color_picker_large.png)
 
 Create the color picker by instantiating the `ColorPicker` object with the desired size
 
@@ -17,7 +17,7 @@ Add the color picker element to the DOM
 
 The initial color and the currently selected color are shown on the top right corner along with the RGB values and its corresponding [HSV](http://en.wikipedia.org/wiki/HSL_and_HSV) values.
 
-![Small Color Picker](docs/images/color_picker_small.png)
+![Small Color Picker](https://raw.github.com/coderespawn/dart-color-picker/master/docs/images/color_picker_small.png)
 
 A smaller color picker can be created with the following code:
 
@@ -25,7 +25,7 @@ A smaller color picker can be created with the following code:
 
 The details on the right are hidden to save space by setting the `showInfoBox` parameter to `false`
 
-![Tiny Color Picker](docs/images/color_picker_tiny.png)
+![Tiny Color Picker](https://raw.github.com/coderespawn/dart-color-picker/master/docs/images/color_picker_tiny.png)
 
 ## Initial Color
 
@@ -51,4 +51,4 @@ Call the `dispose()` method to remove the color picker from the DOM and then rem
 		colorPicker.dispose();
 
 ## Demo
-Check out the live demo [here](#)
+Check out the live demo [here](http://htmlpreview.github.com/?https://raw.github.com/coderespawn/dart-color-picker/master/color_picker_demo/web/color_picker_demo.html)
