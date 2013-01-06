@@ -35,6 +35,11 @@ class ColorValue {
   
   ColorValue() : r = 0, g = 0, b = 0;
   ColorValue.fromRGB(this.r, this.g, this.b);
+  ColorValue.copy(ColorValue other) {
+    this.r = other.r;
+    this.g = other.g;
+    this.b = other.b;
+  }
   
   void set(int r, int g, int b) {
     this.r = r;
@@ -84,4 +89,11 @@ class ColorValue {
         g - other.g, 
         b - other.b); 
   }
+  
+  String toString() => "rgba($r, $g, $b, 1.0)";
+}
+
+
+class HsvColor {
+  
 }

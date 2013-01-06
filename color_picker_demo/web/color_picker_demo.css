@@ -1,13 +1,16 @@
 
 body {
-  background-color: #F8F8F8;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   font-weight: normal;
   line-height: 1.2em;
-  margin: 15px;
-  width: 100%;
+  margin: 0px;
   height: 100%;
+}
+
+.content {
+  margin: 15px;
+  
 }
 
 p {

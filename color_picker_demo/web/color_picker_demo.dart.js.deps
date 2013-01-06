@@ -81,5 +81,7 @@ file:///D:/dev/DartApps/color_picker/color_picker/color_picker_lib.dart
 file:///D:/dev/DartApps/color_picker/color_picker/src/color_picker.dart
 file:///D:/dev/DartApps/color_picker/color_picker/src/utils/color_utils.dart
 file:///D:/dev/DartApps/color_picker/color_picker/src/utils/color_value.dart
+file:///D:/dev/DartApps/color_picker/color_picker/src/utils/mouse_listener.dart
 file:///D:/dev/DartApps/color_picker/color_picker/src/widgets/hsv_gradient_picker.dart
+file:///D:/dev/DartApps/color_picker/color_picker/src/widgets/hue_slider.dart
 file:///D:/dev/DartApps/color_picker/color_picker_demo/web/color_picker_demo.dart

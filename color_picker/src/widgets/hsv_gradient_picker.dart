@@ -5,7 +5,7 @@ part of color_picker;
  * based on the specified hue angle
  * http://en.wikipedia.org/wiki/HSL_and_HSV#Basic_principle
  */ 
-class HsvGradientPicker {
+class HsvGradientPicker implements HueChangeListener {
   /** 
    * The hue component of the color. This is the angle in the HSV cylinder
    * and is represented in radians
@@ -26,7 +26,14 @@ class HsvGradientPicker {
   num value;
   
   /** The current color value selected on the widget */
-  ColorValue color;
+  ColorValue _color;
+  
+  ColorValue get color => _color;
+  set color(ColorValue value) {
+    _color = value;
+    _rebuildColor();
+    _draw();
+  }
 
   /** The pure color calculated from the hue angle */
   ColorValue hueColor;
@@ -41,77 +48,88 @@ class HsvGradientPicker {
   CanvasRenderingContext2D context;
   ImageData buffer;
   
-  // Mouse handlers
-  var _handlerMouseMoved;
-  var _handlerMouseDown;
-  var _handlerMouseUp;
-  
   // The cursor position
   int _cursorX = 0;
   int _cursorY = 0;
   
-  HsvGradientPicker(int width, int height, [this.color]) {
+  /** Listener for mouse events in the canvas element */
+  _MouseListener mouseListener;
+  
+  HsvGradientPicker(int width, int height, [this._color]) {
     canvas = new CanvasElement(width: width, height: height);
     canvas.classes.add("color-picker-hsv-gradient");
     context = canvas.context2d;
-    if (color == null) {
-      color = new ColorValue();
+    if (_color == null) {
+      _color = new ColorValue();
     }
     
-    _handlerMouseDown = onMouseDown;
-    _handlerMouseMoved = onMouseMoved;
-    _handlerMouseUp = onMouseUp;
-    canvas.on.mouseDown.add(_handlerMouseDown);
+    mouseListener = new _MouseListener(canvas, true);
+    mouseListener.onMouseDown = onMouseDown;
+    mouseListener.onMouseMoved = onMouseMoved;
     
-    _calculateHSV(true);
-    _rebuildGradient();
+    _rebuildColor();
     _draw();
     
     _notifyColorChanged();
   }
   
-  /** Rebuilds the grandient in the buffer image */
-  void _rebuildGradient() {
-    buffer = context.createImageData(canvas.width, canvas.height);
-    var data = buffer.data;
-    final height = buffer.height;
-    final width = buffer.width;
-    for (var h = 0; h < height; h++) {
-      num intensity = (height - 1 - h) / (height - 1);
-      int greyScaleComponent = (255 * intensity).toInt();
-      var startColor = new ColorValue.fromRGB(greyScaleComponent, greyScaleComponent, greyScaleComponent); 
-      var endColor = hueColor * intensity;
-      for (var w = 0; w < width; w++) {
-        num pixelIntensity = w / (width - 1);
-        var pixelColor = startColor + (endColor - startColor) * pixelIntensity;
-        int index = (width * h + w) * 4;
-        buffer.data[index + 0] = pixelColor.r;
-        buffer.data[index + 1] = pixelColor.g;
-        buffer.data[index + 2] = pixelColor.b;
-        buffer.data[index + 3] = 255;
-      }
-    }
+  /** Recalcualtes the HSV and rebuilds the color gradient based on the new color */
+  void _rebuildColor() {
+    _calculateHSV(true);
+    _rebuildGradient();
 
     // Calculate the position of the cursor in the canvas
     _cursorX = (canvas.width * saturation).toInt();
     _cursorY = (canvas.height * (1 - value / 255)).toInt();
   }
   
+  /** Rebuilds the grandient in the buffer image */
+  void _rebuildGradient() {
+    buffer = context.createImageData(canvas.width, canvas.height);
+    final height = buffer.height;
+    final width = buffer.width;
+    final intensityDelta = 1 / (width - 1);
+    List<int> _buffer = new List<int>(buffer.data.length);
+    int index = 0;
+    for (var h = 0; h < height; h++) {
+      num intensity = (height - 1 - h) / (height - 1);
+      int greyScaleComponent = (255 * intensity).toInt();
+      var startColor = new ColorValue.fromRGB(greyScaleComponent, greyScaleComponent, greyScaleComponent); 
+      var endColor = hueColor * intensity;
+      num pixelIntensity = 0;
+      for (var w = 0; w < width; w++) {
+        final pixelColor = startColor + (endColor - startColor) * pixelIntensity;
+        _buffer[index++] = pixelColor.r;
+        _buffer[index++] = pixelColor.g;
+        _buffer[index++] = pixelColor.b;
+        _buffer[index++] = 255;
+        pixelIntensity += intensityDelta;
+      }
+    }
+    buffer.data.setElements(_buffer, 0);
+  }
+  
   /** Calcualtes the HSV components of the current color */
   void _calculateHSV([bool calculateHue = false]) {
+    // Get the value (V) component in the HSV color space 
+    value = _getHsvValueComponent(_color);
+    
     if (calculateHue) {
       // Calculate the hue (H) component in the HSV color space
-      final alpha = (2 * color.r - color.g - color.b) / 2;
-      final beta = sqrt(3) / 2 * (color.g - color.b);
+      final alpha = (2 * _color.r - _color.g - _color.b) / 2;
+      final beta = sqrt(3) / 2 * (_color.g - _color.b);
       hue = atan2(beta, alpha);
+      if (hue < 0) {
+        hue += PI * 2;
+      }
+      
       chroma = sqrt(alpha * alpha + beta * beta);
+
+      // Get the saturation (S) component 
+      saturation = (chroma == 0) ? 0 : chroma / value;
+      
     }
     
-    // Get the value (V) component in the HSV color space 
-    value = _getHsvValueComponent(color);
-    
-    // Get the saturation (S) component 
-    saturation = (chroma == 0) ? 0 : chroma / value;
     
     /** Get the pure color from the hue angle */
     hueColor = _getHueColor(hue);
@@ -125,13 +143,33 @@ class HsvGradientPicker {
     context.putImageData(buffer, 0, 0);
     _drawCursor();
   }
+
+  /** 
+   * Implements HueChagneListner. Called whenever the hue angle is changed.
+   * [angle] is in radians
+   */
+  void onHueChanged(num angle) {
+    hue = angle;
+    
+    /** Get the pure color from the hue angle */
+    hueColor = _getHueColor(hue);
+    
+    _recalculateColorFromCursor();
+    // Update the selected color since the hue has changed
+//    _recalculateColor();
+    
+    // Rebuild the gradient and redraw
+    _rebuildGradient();
+    _draw();
+    _notifyColorChanged();
+  }
   
   /** Draws the cursor on the currently selected color position */
   _drawCursor() {
     
     // Find out the luminosity of the selected color to choose an 
     // appropriate color for the cursor
-    final luma = _getColorLuma(color);
+    final luma = _getColorLuma(_color);
     var cursorColor = "black";
     if (luma < 0.5) {
       // color around this area is too dark. make the cursor color white
@@ -144,68 +182,45 @@ class HsvGradientPicker {
     context.stroke();
   }
 
-
-  /** The position of the mouse the dragging started */
-  MouseEvent startMouseEvent;
-  int startMouseX;
-  int startMouseY;
   
   // Mouse Event Handlers
-  void onMouseDown(MouseEvent e) {
-    startMouseEvent = e;
-    startMouseX = e.offsetX;
-    startMouseY = e.offsetY;
-    _setCursorPosition(e);
-
-    // Listen to global mouse move events
-    document.body.on.mouseMove.add(_handlerMouseMoved);
-    document.body.on.mouseUp.add(_handlerMouseUp);
-    
-    document.body.classes.add("unselectable");
+  void onMouseDown(int x, int y) {
+    _setCursorPosition(x, y);
   }
   
-  void onMouseMoved(MouseEvent e) {
-    _setCursorPosition(e);
+  void onMouseMoved(int x, int y) {
+    _setCursorPosition(x, y);
   }
   
-  void onMouseUp(MouseEvent e) {
-    // Stop listening to global mouse events 
-    document.body.on.mouseMove.remove(_handlerMouseMoved);
-    document.body.on.mouseUp.remove(_handlerMouseUp);
-    document.body.classes.remove("unselectable");
-  }
-  
-  void _setCursorPosition(MouseEvent event) {
+  void _setCursorPosition(int x, int y) {
     // Get the cursor bounds clamped to the canvas rectangle
-    _cursorX = startMouseX + event.pageX - startMouseEvent.pageX;
-    _cursorY = startMouseY + event.pageY - startMouseEvent.pageY;
-    _cursorX = max(0, min(canvas.width, _cursorX));
-    _cursorY = max(0, min(canvas.height, _cursorY));
-  
-    num nx = _cursorX / canvas.width;
-    num ny = _cursorY / canvas.height;
-    
-    // Calculate the new color value
-    final newValue = hueColor * (1 - ny);
-    
-    final intensity = ((1 - ny) * 255).round().toInt();
-    var startColor = new ColorValue.fromRGB(intensity, intensity, intensity);
-    var endColor = newValue;
-    
-    color = startColor + (endColor - startColor) * nx;
+    _cursorX = x;
+    _cursorY = y;
+    _recalculateColorFromCursor();
     _calculateHSV();
-    
-    // Notify the observers that the color has changed
     _notifyColorChanged();
-    
-    // Redraw the scene
     _draw();
+  }
+  
+  void _recalculateColorFromCursor() {
+    saturation = _cursorX / canvas.width;
+    value = (canvas.height - _cursorY) / canvas.height * 255;
+    
+    // Normalize the value
+    final num nvalue = value / 255;
+    // Calculate the new color value (V) component of HSV
+    final ColorValue valueColor = hueColor * nvalue;
+    
+    final intensity = (nvalue * 255).round().toInt();
+    var startColor = new ColorValue.fromRGB(intensity, intensity, intensity);
+    var endColor = valueColor;
+    _color = startColor + (endColor - startColor) * saturation;
   }
 
   /** Notify the observer that the color has changed */
   void _notifyColorChanged() {
     if (colorChangeListener != null) {
-      colorChangeListener.onColorChanged(color);
+      colorChangeListener(_color, hue, saturation, value);
     }
   }
 }
