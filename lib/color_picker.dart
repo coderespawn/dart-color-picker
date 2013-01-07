@@ -7,7 +7,10 @@ class ColorPicker {
   /** The initial color that was provided to the color picker */
   ColorValue initialColor;
   
-  set currentColor(ColorValue value) => picker._color = value;
+  set currentColor(ColorValue value) {
+    picker._color = value;
+    hueSlider.hueAngle = picker.hue;
+  }
   ColorValue get currentColor => picker._color;
   
   /** The HSV Color picker gradient */
