@@ -1,5 +1,5 @@
 name: color_picker
-version: 1.0.1
+version: 1.0.2
 description: >
   The Color Picker control creates a Adobe Photoshop style HSV color picker 
   where the RGB values can be picked based on the Hue, Saturation and Value 

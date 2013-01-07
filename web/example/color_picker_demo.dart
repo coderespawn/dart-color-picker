@@ -28,6 +28,4 @@ void _create() {
   tinyColorPicker.colorChangeListener = (ColorValue color, num hue, num saturation, num brightness) {
     query("#tiny_color_value").innerHtml = color.toString();
   };
-  
-  
 }

@@ -89,8 +89,9 @@ class ColorValue {
         g - other.g, 
         b - other.b); 
   }
-  
+
   String toString() => "rgba($r, $g, $b, 1.0)";
+  String toRgbString() => "$r, $g, $b";
 }
 
 
