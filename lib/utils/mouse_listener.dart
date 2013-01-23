@@ -67,8 +67,8 @@ class _MouseListener {
     startMouseY = e.offsetY;
     _cursorX = startMouseX;
     _cursorY = startMouseY;
-    _cursorX = max(0, min(element.width, _cursorX));
-    _cursorY = max(0, min(element.height, _cursorY));
+    _cursorX = max(0, min(element.clientWidth, _cursorX));
+    _cursorY = max(0, min(element.clientHeight, _cursorY));
     if (dragMode) {
       document.body.on.mouseMove.add(_handlerMoveRef);
       document.body.on.mouseUp.add(_handlerUpRef);
@@ -87,8 +87,8 @@ class _MouseListener {
     // Get the cursor bounds clamped to the canvas rectangle
     _cursorX = startMouseX + event.pageX - startMouseEvent.pageX;
     _cursorY = startMouseY + event.pageY - startMouseEvent.pageY;
-    _cursorX = max(0, min(element.width, _cursorX));
-    _cursorY = max(0, min(element.height, _cursorY));
+    _cursorX = max(0, min(element.clientWidth, _cursorX));
+    _cursorY = max(0, min(element.clientHeight, _cursorY));
     
     if (onMouseMoved != null) {
       onMouseMoved(_cursorX, _cursorY);

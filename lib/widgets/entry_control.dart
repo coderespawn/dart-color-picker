@@ -37,7 +37,7 @@ class EntryControl {
     elementName.innerHtml = name;
     elementValue.value = getValue();
     
-    elementValue.on.change.add((e) {
+    elementValue.onChange.listen((e) {
       setValue(elementValue.value);
     });
   }
