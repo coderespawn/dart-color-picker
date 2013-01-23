@@ -1,10 +1,11 @@
 name: color_picker
-version: 1.1.1
+version: 1.1.2
 description: >
   The Color Picker control creates a Adobe Photoshop style HSV color picker 
   where the RGB values can be picked based on the Hue, Saturation and Value 
   parameters.  Multiple sizes are supported.
 dependencies:
   browser: 0.3.1+1
+  unittest: 0.3.1+1
 author: Ali Akbar Vathi <ali.akbar@gmail.com>
 homepage: https://github.com/coderespawn/dart-color-picker

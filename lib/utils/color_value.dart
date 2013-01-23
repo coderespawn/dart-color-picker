@@ -30,6 +30,9 @@ class ColorValue {
       r = int.parse(tokens[0]);
       g = int.parse(tokens[1]);
       b = int.parse(tokens[2]);
+      r = max(0, min(255, r));
+      g = max(0, min(255, g));
+      b = max(0, min(255, b));
     }
   }
   
@@ -52,19 +55,19 @@ class ColorValue {
    * and is not case-sensitive 
    */
   void _parseHex(String hex) {
-    if (hex.length != 3 || hex.length != 6) {
+    if (hex.length != 3 && hex.length != 6) {
       throw new Exception("Invalid color hex format");
     }
     
     if (hex.length == 3) {
-      var a = hex.substring(0, 0);
-      var b = hex.substring(1, 1);
-      var c = hex.substring(2, 2);
+      var a = hex.substring(0, 1);
+      var b = hex.substring(1, 2);
+      var c = hex.substring(2, 3);
       hex = "$a$a$b$b$c$c";
     }
-    var hexR = hex.substring(0, 1);
-    var hexG = hex.substring(2, 3);
-    var hexB = hex.substring(4, 5);
+    var hexR = hex.substring(0, 2);
+    var hexG = hex.substring(2, 4);
+    var hexB = hex.substring(4, 6);
     r = int.parse("0x$hexR");
     g = int.parse("0x$hexG");
     b = int.parse("0x$hexB");
