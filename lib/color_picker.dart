@@ -1,5 +1,6 @@
 library color_picker;
 import 'dart:html';
+import 'dart:async';
 import 'dart:math';
 
 part 'color_picker_lib.dart';

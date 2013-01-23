@@ -20,9 +20,9 @@ class _MouseListener {
    */
   bool dragMode;
   
-  var _handlerMoveRef;
-  var _handlerDownRef;
-  var _handlerUpRef;
+  StreamSubscription _handlerMoveRef;
+  StreamSubscription _handlerDownRef;
+  StreamSubscription _handlerUpRef;
   
   ColorPickerMouseEvent onMouseMoved;
   ColorPickerMouseEvent onMouseUp;
@@ -38,25 +38,20 @@ class _MouseListener {
   int _cursorY = 0;
   
   _MouseListener(this.element, [this.dragMode = true]) {
-    _handlerMoveRef = _handlerMove;
-    _handlerDownRef = _handlerDown;
-    _handlerUpRef = _handlerUp;
-    
-    element.on.mouseDown.add(_handlerDownRef);
+    _handlerDownRef = element.onMouseDown.listen(_handlerDown);
     if (!dragMode) {
-      element.on.mouseUp.add(_handlerUpRef);
-      element.on.mouseMove.add(_handlerMoveRef);
+      _handlerUpRef = element.onMouseUp.listen(_handlerUp);
+      _handlerMoveRef = element.onMouseMove.listen(_handlerMove);
     }
   }
   
   void dispose() {
-    element.on.mouseDown.remove(_handlerDownRef);
-    if (!dragMode) {
-      element.on.mouseUp.remove(_handlerUpRef);
-      element.on.mouseMove.remove(_handlerMoveRef);
-    } else {
-      document.body.on.mouseMove.remove(_handlerMoveRef);
-      document.body.on.mouseUp.remove(_handlerUpRef);
+    _handlerDownRef.cancel();
+    if (_handlerUpRef != null) {
+      _handlerUpRef.cancel();
+    }
+    if (_handlerMoveRef != null) {
+      _handlerMoveRef.cancel();
     }
   }
 
@@ -70,8 +65,8 @@ class _MouseListener {
     _cursorX = max(0, min(element.clientWidth, _cursorX));
     _cursorY = max(0, min(element.clientHeight, _cursorY));
     if (dragMode) {
-      document.body.on.mouseMove.add(_handlerMoveRef);
-      document.body.on.mouseUp.add(_handlerUpRef);
+      _handlerMoveRef = document.body.onMouseMove.listen(_handlerMove);
+      _handlerUpRef = document.body.onMouseUp.listen(_handlerUp);
     }
 
     // Disable text selection
@@ -99,8 +94,8 @@ class _MouseListener {
     _cursorX = e.offsetX;
     _cursorY = e.offsetY;
     if (dragMode) {
-      document.body.on.mouseMove.remove(_handlerMoveRef);
-      document.body.on.mouseUp.remove(_handlerUpRef);
+      if (_handlerMoveRef != null) _handlerMoveRef.cancel();
+      if (_handlerUpRef != null) _handlerUpRef.cancel();
     }
     if (onMouseUp != null) {
       onMouseUp(_cursorX, _cursorY);

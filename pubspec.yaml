@@ -5,6 +5,6 @@ description: >
   where the RGB values can be picked based on the Hue, Saturation and Value 
   parameters.  Multiple sizes are supported.
 dependencies:
-  browser: any
+  browser: 0.3.1+1
 author: Ali Akbar Vathi <ali.akbar@gmail.com>
 homepage: https://github.com/coderespawn/dart-color-picker
