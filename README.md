@@ -60,4 +60,4 @@ Call the `dispose()` method to remove the color picker from the DOM and then rem
 		colorPicker.dispose();
 
 ## Demo
-Check out the live demo [here](http://htmlpreview.github.com/?https://raw.github.com/coderespawn/dart-color-picker/master/web/example/color_picker_demo.html)
+Check out the live demo [here](http://dart-app-samples.appspot.com/demos/dart-color-picker/color_picker_demo.html)
