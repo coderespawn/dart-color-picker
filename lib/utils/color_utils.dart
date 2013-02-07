@@ -1,6 +1,6 @@
 part of color_picker;
 
-/** 
+/**
  * Returns the color intensity (luma) for the specified [color]
  * Value ranges from [0..1]
  */
@@ -13,7 +13,7 @@ num _getHsvValueComponent(ColorValue color) {
   return max(max(color.r, color.g), color.b);
 }
 
-/** 
+/**
  * Get the pure color from the Hue [angle].
  * [angle] is in radians
  */

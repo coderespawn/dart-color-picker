@@ -9,7 +9,7 @@ void _create() {
   // Large Color picker.  The size is configurable.  Set to 256 for pixel perfect color range
   var largeColorPicker = new ColorPicker(256);
   query("#large_picker").nodes.add(largeColorPicker.element);
-  
+
   // Smaller color pickers can be created by specifying a smaller dimension.
   // The info box on the right can be hidden to save space
   // An initial color can be specifed while instantiating the color picker
@@ -20,7 +20,7 @@ void _create() {
     query("#small_color_value").innerHtml = color.toString();
   };
 
-  
+
   // Specify an even smaller size for the color picker. Hide the info box
   var tinyColorPicker = new ColorPicker(64, showInfoBox: false);
   query("#tiny_picker").nodes.add(tinyColorPicker.element);
