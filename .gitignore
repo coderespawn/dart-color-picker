@@ -9,7 +9,7 @@
 *.map
 *.lock
 *.tmp
-packages/
+packages
 out/
 
 # Compiled source #
