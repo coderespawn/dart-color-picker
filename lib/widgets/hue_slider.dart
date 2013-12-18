@@ -43,7 +43,7 @@ class HueSlider {
   }
 
   void _draw() {
-    final context = canvas.context2d;
+    final context = canvas.context2D;
     context.fillStyle = gradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -105,7 +105,7 @@ class HueSlider {
     ];
 
     // Create a hue color gradient object to draw in the canvas
-    final context = canvas.context2d;
+    final context = canvas.context2D;
     gradient = context.createLinearGradient(0, 0, 0, canvas.height);
 
     // Calculate the gradient stop delta for each color
